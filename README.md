@@ -1,55 +1,44 @@
-# Setup
+# bin
 
-Add to ~/.bashrc or ~/.zshrc
+Personal helper scripts. Put this directory on your `PATH`.
 
-```sh
-export LSCOLORS=ExFxBxDxCxegedabagacad
-export PATH="$HOME/.local/bin:$PATH"
-alias l='ls -CGF' # C is list by columns, G is colorized output & F appends / for directories, * for executables & @ for symlinks, etc.
-alias lg='lazygit'
-alias v='vim'
-```
-
-Run:
+## Install
 
 ```bash
-echo "export PATH=$(pwd):\$PATH" >> "$HOME/.bashrc"
+git clone git@github.com:khooeee/bin.git ~/bin
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc   # or ~/.zshrc
 source ~/.bashrc
 ```
 
-or
+Requires: `git`. Optional: `gh` (`cpr`); a clipboard tool such as `pbcopy` / `xclip` / `wl-copy` (`last-commit`, `last-sha`).
 
-```bash
-echo "export PATH=$(pwd):\$PATH" >> "$HOME/.zshrc"
-source ~/.zshrc
-```
+## Commands
 
-**Conflicts**
-These still have the same name as oh-my-zsh git aliases, but different meanings:
+| command | what it does |
+|---|---|
+| `cpr` | branch from message → add all → commit → force-push → create PR (`gh`) → open diff |
+| `gac` | add all + commit |
+| `gacp` | add all + commit + push `-u` |
+| `gcom` | checkout default branch (`origin/HEAD`) |
+| `gdco` | checkout given branch, then delete previous branch |
+| `gdcom` | stash if needed → checkout default → delete previous → pull → stash pop |
+| `gmv` | `git mv` |
+| `gplom` | stash if needed → pull default branch → stash pop |
+| `gpoh` | force-push current branch to `origin` (`-fu`) |
+| `gq` | add all + amend keeping last message |
+| `gqp` | `gq` + force-push |
+| `grhh` | hard reset + clean untracked from repo root |
+| `grhu` | fetch + hard reset to upstream + clean |
+| `last-commit` | copy last commit subject + URL to clipboard |
+| `last-sha` | copy last commit SHA to clipboard |
 
-| new bin | old bin | oh-my-zsh |
-|---|---|---|
-| `gacp` | `gap` | add all, commit, push upstream |
-| `grhu` | `gru` | fetch + hard reset upstream + clean |
+## Notes
 
-**oh-my-zsh equivalents**
-Covered by oh-my-zsh under different names:
+Destructive / force: `grhh`, `grhu`, `gqp`, `gpoh`, `cpr` (force-push).
 
-| git command | old bin | oh-my-zsh equivalent |
-|---|---|---|
-| cd $(git rev-parse --show-toplevel) | gr | grt |
-| git add | gad | ga |
-| git branch | gbr | gb |
-| git commit | gcm | gc |
-| git diff | gdf | gd |
-| hard reset + clean | grh | gwipe |
-| git merge | gmg | gm |
-| git push | gph | gp |
-| git pull | gpl | gl |
-| git remote | gre | gr |
-| git reset | grs | grh |
-| git stash list | gsl | gstl |
-| git revert | grv | grev |
-| git stash drop | gsd | gstd |
-| git stash pop | gspop | gstp |
-| git stash push | gspush | gstu |
+If you use oh-my-zsh git aliases, these names can clash or mean something different:
+
+| bin | note |
+|---|---|
+| `gacp` | not the same as common zsh `gap` / related add-patch flow |
+| `grhu` | fetch + hard reset upstream + clean (destructive) |
