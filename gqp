@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+message=$(git log -1 --pretty=%B)
+git add --all :/
+git commit --amend --message "$message"
+git push -f

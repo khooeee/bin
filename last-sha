@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+OUTPUT=$(git log -1 --pretty=format:%H)
+echo Copied to clipboard: $OUTPUT
+echo $OUTPUT | pbcopy

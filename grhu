@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+git fetch
+git reset @{upstream} --hard
+cd $(git rev-parse --show-toplevel)
+git clean -df

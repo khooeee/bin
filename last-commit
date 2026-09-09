@@ -1,0 +1,59 @@
+#!/bin/bash
+set -euo pipefail
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "last-commit: not inside a git repository" >&2
+  exit 1
+fi
+
+remote_name="${LAST_COMMIT_REMOTE:-origin}"
+
+if git remote get-url "$remote_name" >/dev/null 2>&1; then
+  remote_url="$(git remote get-url "$remote_name")"
+else
+  remote_name="$(git remote | head -n 1)"
+
+  if [ -z "$remote_name" ]; then
+    echo "last-commit: no git remotes found" >&2
+    exit 1
+  fi
+
+  remote_url="$(git remote get-url "$remote_name")"
+fi
+
+remote_to_web_url() {
+  local url="$1"
+  url="${url%.git}"
+
+  case "$url" in
+    git@*:*)
+      local host_and_path="${url#git@}"
+      local host="${host_and_path%%:*}"
+      local path="${host_and_path#*:}"
+      printf 'https://%s/%s' "$host" "$path"
+      ;;
+    ssh://git@*)
+      local host_and_path="${url#ssh://git@}"
+      local host="${host_and_path%%/*}"
+      local path="${host_and_path#*/}"
+      printf 'https://%s/%s' "$host" "$path"
+      ;;
+    git://*)
+      printf 'https://%s' "${url#git://}"
+      ;;
+    http://*|https://*)
+      printf '%s' "$url"
+      ;;
+    *)
+      printf '%s' "$url"
+      ;;
+  esac
+}
+
+commit_hash="$(git log -1 --pretty=format:%H)"
+commit_subject="$(git log -1 --pretty=format:%s)"
+repo_url="$(remote_to_web_url "$remote_url")"
+line="- ${commit_subject} @ ${repo_url}/commit/${commit_hash}"
+
+printf '%s\n' "$line" | pbcopy
+printf 'Copied to clipboard "%s"\n' "$line"
