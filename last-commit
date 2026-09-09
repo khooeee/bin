@@ -50,10 +50,25 @@ remote_to_web_url() {
   esac
 }
 
+copy_to_clipboard() {
+  if command -v pbcopy >/dev/null 2>&1; then
+    pbcopy
+  elif command -v wl-copy >/dev/null 2>&1; then
+    wl-copy
+  elif command -v xclip >/dev/null 2>&1; then
+    xclip -selection clipboard
+  elif command -v xsel >/dev/null 2>&1; then
+    xsel --clipboard --input
+  else
+    echo "last-commit: no clipboard tool found (tried pbcopy, wl-copy, xclip, xsel)" >&2
+    exit 1
+  fi
+}
+
 commit_hash="$(git log -1 --pretty=format:%H)"
 commit_subject="$(git log -1 --pretty=format:%s)"
 repo_url="$(remote_to_web_url "$remote_url")"
 line="- ${commit_subject} @ ${repo_url}/commit/${commit_hash}"
 
-printf '%s\n' "$line" | pbcopy
+printf '%s\n' "$line" | copy_to_clipboard
 printf 'Copied to clipboard "%s"\n' "$line"

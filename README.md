@@ -10,7 +10,7 @@ echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc   # or ~/.zshrc
 source ~/.bashrc
 ```
 
-Requires: `git`. Optional: `gh` (`cpr`); a clipboard tool such as `pbcopy` / `xclip` / `wl-copy` (`last-commit`, `last-sha`).
+Requires: `git`. Optional: `gh` (`cpr`); a clipboard tool — `pbcopy` (macOS), or on Ubuntu `wl-copy` / `xclip` / `xsel` (`last-commit`, `last-sha`).
 
 ## Commands
 

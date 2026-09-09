@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
+copy_to_clipboard() {
+  if command -v pbcopy >/dev/null 2>&1; then
+    pbcopy
+  elif command -v wl-copy >/dev/null 2>&1; then
+    wl-copy
+  elif command -v xclip >/dev/null 2>&1; then
+    xclip -selection clipboard
+  elif command -v xsel >/dev/null 2>&1; then
+    xsel --clipboard --input
+  else
+    echo "last-sha: no clipboard tool found (tried pbcopy, wl-copy, xclip, xsel)" >&2
+    exit 1
+  fi
+}
+
 OUTPUT=$(git log -1 --pretty=format:%H)
-echo Copied to clipboard: $OUTPUT
-echo $OUTPUT | pbcopy
+printf '%s\n' "$OUTPUT" | copy_to_clipboard
+echo "Copied to clipboard: $OUTPUT"
