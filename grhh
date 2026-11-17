@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+git reset HEAD --hard
+cd $(git rev-parse --show-toplevel)
+git clean -df

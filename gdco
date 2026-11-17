@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo Branch must be specified.
+  exit -1
+fi
+
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+if [ "$1" == "$branch_name" ]; then
+  echo The specified branch cannot be the current branch.
+  exit -1
+fi
+
+git checkout $1
+if [ $? != 0 ]; then
+  exit -1
+fi
+
+git branch -d $branch_name

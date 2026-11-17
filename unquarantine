@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run after `brew upgrade` to stop the "downloaded from the Internet" prompt
+# on freshly upgraded CLIs.
+
+strip() {
+  xattr -dr com.apple.quarantine "$1"
+  echo "unquarantined: $1"
+}
+
+if bin=$(command -v claude); then
+  strip "$(realpath "$bin")"
+fi
+
+# codex's binary loads files from codex-resources/ next to bin/, so clear the whole version dir
+if bin=$(command -v codex); then
+  strip "$(dirname "$(dirname "$(realpath "$bin")")")"
+fi
+
+if [[ -d /Applications/Birdsong.app ]]; then
+  xattr -cr /Applications/Birdsong.app
+  echo "unquarantined: /Applications/Birdsong.app"
+fi

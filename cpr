@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+if [[ $# -eq 0 ]]; then
+  echo "Usage: cpr <commit message>" >&2
+  exit 1
+fi
+
+message="$*"
+slug=$(
+  printf '%s' "$message" |
+  tr '[:upper:]' '[:lower:]' |  # convert to lowercase
+  tr ' ' '-' |                  # replace spaces with hyphens
+  sed 's/[^a-z0-9-]//g' |       # strip non-alphanumeric chars (keep hyphens)
+  sed 's/-\{2,\}/-/g' |         # collapse consecutive hyphens
+  sed 's/^-*//; s/-*$//'        # trim leading/trailing hyphens
+)
+
+if [[ -z "$slug" ]]; then
+  echo "Could not derive branch name from: $message" >&2
+  exit 1
+fi
+
+git checkout -b "ck-${slug}"
+git add --all :/                # :/ adds from repo root
+git commit -m "$message"
+git push -fu origin HEAD
+url=$(gh pr create --fill)
+echo "$url"
+gh pr diff --web
